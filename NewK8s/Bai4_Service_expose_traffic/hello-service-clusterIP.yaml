@@ -1,0 +1,40 @@
+#Đây là loại service sẽ tạo một IP và local DNS mà sẽ có thể truy cập ở bên trong cluster,
+#không thể truy cập từ bên ngoài, được dùng chủ yếu cho các Pod ở bên trong cluster dễ dàng giao tiếp với nhau.
+
+#Ví dụ như sau, ta có một application cần xài redis, ta sẽ deploy một Pod redis và application của ta cần kết nối
+#với Pod redis đó. Với redis thì connection string của nó sẽ có dạng như sau redis://<host-name>:<port>,
+#vậy ứng dụng ta sẽ kết nối với redis thế nào? Sau đây ta sẽ làm ví dụ tạo Pod redis và Service cho nó.
+
+# tóm lại ClusterIP giúp các ứng dụng deploy trong cluster của ta giao tiếp với nhau dễ dàng hơn
+# còn muốn client từ bên ngoài có thể truy cập vào ứng dụng của chúng ta thì sử dụng 3 cách còn lại
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - image: redis # redis image
+          name: redis
+          ports:
+            - containerPort: 6379
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: redis # label selectors Pod redis
+  ports:
+    - port: 6379 # port of the serivce
+      targetPort: 6379 # port of the container that service will forward to

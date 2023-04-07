@@ -1,0 +1,42 @@
+apiVersion: apps/v1 # change version API
+kind: ReplicaSet # change resource name
+metadata:
+  name: hello-rs
+spec:
+  replicas: 2
+  selector:
+    matchLabels: # change here
+      app: hello-kube
+  template:
+    metadata:
+      labels:
+        app: hello-kube
+    spec:
+      containers:
+        - image: 080196/hello-kube
+          name: hello-kube
+          ports:
+            - containerPort: 3000
+
+
+
+<CustomerId>227</CustomerId>
+<AccountDHL>527747271</AccountDHL>
+<ReceiverState>Cani</ReceiverState>
+CreatedDate
+CountryName
+ZoneName
+CreatedByName
+PickUpDate
+
+===xmlItemCommision
+TenantId
+ItemId
+
+====xmlItemFreight
+khác hoàn toàn và chỉ có 11 cái
+
+
+<RealWeight>100</RealWeight>
+<PackageFreight>0</PackageFreight>
+<BatchFreight>0</BatchFreight>

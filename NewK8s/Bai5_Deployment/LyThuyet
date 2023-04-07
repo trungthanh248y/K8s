@@ -1,0 +1,25 @@
+Deployment là một resource của kubernetes giúp ta trong việc cập nhật một version mới của úng dụng một cách dễ dàng,
+nó cung cấp sẵn 2 strategy để deploy là Recreate và RollingUpdate, tất cả đều được thực hiện tự động bên dưới, 
+và các version được deploy sẽ có một histroy ở đằng sau, ta có thể rollback and rollout giữa các phiên bản bất 
+cứ lúc nào mà không cần chạy lại CI/CD.
+
+tóm lại Deployment cập nhật một phiên bản mới của ứng dụng một cách dể dàng mà không gây ra ảnh hưởng nhiều tới client
+có 2 cách truyền thống:
++, RollingUpdate
++, Recreate
++, Bule-Green update
+
+-, Các bước để update version trong Deployment:
+kubectl set image deployment hello-app hello-app=080196/hello-app:v2
++, Cấu trúc câu lệnh 
+kubectl set image deployment <deployment-name> <container-name>=<new-image>
++, Kiểm tra qua trình update đã xong chưa: 
+kubectl rollout status deploy hello-app
++, Nếu câu lệnh rollout status in ra successfully, là ứng dụng của chúng ta đã cập nhật lên version mới. 
+Ta test bằng cách gửi request tới ứng dụng ở địa chỉ localhost:31000.
+
+-, Các bước để rollback version trong Deployment:
++, kiểm tra lịch sử các lần ứng dụng của chúng ta đã cập nhật
+kubectl rollout history deploy hello-app
++, quay trở lại bước mong muốn:
+kubectl rollout undo deployment hello-app --to-revision=2 (2 ở đây là stt bên column revision)

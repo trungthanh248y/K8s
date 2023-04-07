@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-cm
+  labels:
+    app: application
+spec:
+  containers:
+    - image: 080196/hello-cm
+      name: hello-cm
+      ports:
+        - containerPort: 3000
+      envFrom: # using envFrom instead of env
+        - configMapRef: # referencing the ConfigMap
+            name: postgres-config # name of the ConfigMap
+          prefix: POSTGRES_ # All environment variables will be prefixed with POSTGRES_
+      env:
+        - name: PORT
+          value: '3000'
+        - name: DB_HOST
+          value: postgres
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres
+  labels:
+    app: db
+spec:
+  containers:
+    - image: postgres
+      name: postgres
+      ports:
+        - containerPort: 5432
+      envFrom:
+        - configMapRef:
+            name: postgres-config
+          prefix: POSTGRES_
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: db
+spec:
+  selector:
+    app: db
+  ports:
+    - port: 5432
+      targetPort: 5432
+# Ở đây ta sẽ dùng thuộc tính envFrom thay vì env để chỉ định sử dụng ConfigMap,
+# trường prefix sẽ nối ở phía trước cho tất cả env của ta với giá trị là POSTGRES_.
+# Như các bạn thấy thay vì ta phải viết lại env ở cả 2 Pod thì ta chỉ cần tạo một configmap rồi sử dụng nó lại nhiều lần

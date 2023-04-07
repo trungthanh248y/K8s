@@ -1,0 +1,208 @@
+
+===xmlItem
+<DocumentElement>
+  <mst_Item>
+    <ItemId>0</ItemId>
+    <TenantId>3</TenantId>
+    <CountryId>29</CountryId>
+    <ItemCode>QP03612023</ItemCode>
+    <SendingTime>2023-01-06T01:00:00+07:00</SendingTime>
+    <AcceptancePosCode>230000</AcceptancePosCode>
+    <AccountNumber />
+    <SenderFullname>Nguyễn Trung Thành</SenderFullname>
+    <SenderAddress>Tổng công ty bưu điện VN</SenderAddress>
+    <SenderTel>0919905090</SenderTel>
+    <SenderEmail>trungthanh248y@gmail.com</SenderEmail>
+    <SenderPosCode>0601</SenderPosCode>
+    <SenderContact>UPS ĐẠI LÝ</SenderContact>
+    <ReceiverFullname>Nguyễn Trung Thành</ReceiverFullname>
+    <ReceiverTel>0919909031</ReceiverTel>
+    <ReceiverEmail>trungthanh248y@gmail.com</ReceiverEmail>
+    <ReceiverPosCode>105</ReceiverPosCode>
+    <ReceiverContact>người liên hệ người nhận</ReceiverContact>
+    <ReceiverAddress>KTLT Hà Nội Hà Nội</ReceiverAddress>
+    <ReceiverStreet>KTLT Hà Nội</ReceiverStreet>
+    <ReceiverCity>Hà Nội</ReceiverCity>
+    <SendContent>sao sao</SendContent>
+    <ItemType>2</ItemType>
+    <Weight>1000</Weight>
+    <WeightExc>100</WeightExc>
+    <RealWeight>100</RealWeight>
+    <PackageFreight>0</PackageFreight>
+    <BatchFreight>0</BatchFreight>
+    <TotalFreight>2210000</TotalFreight>
+    <OverSize>0</OverSize>
+    <Direction>1</Direction>
+    <Status>1</Status>
+    <Discount>1</Discount>
+    <IsFarZone>true</IsFarZone>
+    <IsTN>true</IsTN>
+    <IsRR>true</IsRR>
+    <IsHC>true</IsHC>
+    <IsKVC>false</IsKVC>
+    <IsSDC>false</IsSDC>
+    <IsHQK>false</IsHQK>
+    <IsAddRessCorrection>false</IsAddRessCorrection>
+    <IsDeliverySignature>false</IsDeliverySignature>
+    <IsDeliverySignatureAdult>false</IsDeliverySignatureAdult>
+    <IsSaturdayDelivery>false</IsSaturdayDelivery>
+    <IsResidential>false</IsResidential>
+    <IsExtendedArea>false</IsExtendedArea>
+    <IsAdditonalHandling>false</IsAdditonalHandling>
+    <IsLargePackage>false</IsLargePackage>
+    <IsOverMaxLimit>false</IsOverMaxLimit>
+    <IsExpressPlus>false</IsExpressPlus>
+    <IsPayPos>false</IsPayPos>
+    <IsReturn>false</IsReturn>
+    <IsDHL>false</IsDHL>
+    <IsCPN9>false</IsCPN9>
+    <IsCPN10>false</IsCPN10>
+    <IsCPN12>false</IsCPN12>
+    <IsCPNGlobal>false</IsCPNGlobal>
+    <IsCPNEconomy>false</IsCPNEconomy>
+    <IsCPNExpress>false</IsCPNExpress>
+    <IsCPNOther>false</IsCPNOther>
+    <IsOpSaturday>false</IsOpSaturday>
+    <IsOpDelivery>false</IsOpDelivery>
+    <IsOpShip>false</IsOpShip>
+    <IsOpPick>false</IsOpPick>
+    <IsOpPay>false</IsOpPay>
+    <IsOpOther>false</IsOpOther>
+    <IsGPriority>false</IsGPriority>
+    <IsGStandard>false</IsGStandard>
+    <IsGOther>false</IsGOther>
+    <AwbCode />
+    <IsPayShipper>false</IsPayShipper>
+    <IsPayReceiver>false</IsPayReceiver>
+    <IsPayThirdParty>false</IsPayThirdParty>
+    <IsPayCredidCard>false</IsPayCredidCard>
+    <IsPayCheck>false</IsPayCheck>
+    <IsTaxShipper>false</IsTaxShipper>
+    <IsTaxReceiver>false</IsTaxReceiver>
+    <IsTaxThirdParty>false</IsTaxThirdParty>
+    <CreatedBy>230000</CreatedBy>
+    <RowNumber>0</RowNumber>
+    <TotalItem>0</TotalItem>
+    <SumWeight>0</SumWeight>
+    <SumFreight>0</SumFreight>
+    <Quantity>0</Quantity>
+    <CountryCode>US</CountryCode>
+  </mst_Item>
+</DocumentElement>
+
+
+===xmlStatus
+<DocumentElement>
+  <mst_ItemEvent>
+    <Id>0</Id>
+    <TenantId>3</TenantId>
+    <AcceptancePosCode>230000</AcceptancePosCode>
+    <Status>0</Status>
+    <EventTime>2023-01-06T07:14:26.8745324+07:00</EventTime>
+  </mst_ItemEvent>
+</DocumentElement>
+
+===xmlItemCommision
+<DocumentElement>
+  <mst_ItemCommission>
+    <Id>0</Id>
+    <PosCode>230000</PosCode>
+    <Value>976134.95</Value>
+  </mst_ItemCommission>
+</DocumentElement>
+
+
+===xmlItemFreight
+<DocumentElement>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>1</FreightId>
+    <Value>914350</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>2</FreightId>
+    <Value>9144</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>3</FreightId>
+    <Value>1700000</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>4</FreightId>
+    <Value>500000</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>5</FreightId>
+    <Value>750000</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>6</FreightId>
+    <Value>1761739</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>7</FreightId>
+    <Value>500000</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>8</FreightId>
+    <Value>12000</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>9</FreightId>
+    <Value>4550000</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>10</FreightId>
+    <Value>2210000</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>11</FreightId>
+    <Value>1318895</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>12</FreightId>
+    <Value>14507840</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+  <mst_ItemFreight>
+    <Id>0</Id>
+    <FreightId>13</FreightId>
+    <Value>300000</Value>
+    <TypeCost>1</TypeCost>
+    <IsDisplay>false</IsDisplay>
+  </mst_ItemFreight>
+</DocumentElement>

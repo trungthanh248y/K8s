@@ -1,0 +1,11 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/gce-pd # use gce-pd provisioner
+parameters:
+  type: pd-ssd
+  zone: europe-west1-b
+#Ở đây ta tạo một StorageClass tên là fast, sử dụng gce-pd provisioner mà sẽ giúp ta tự động tạo PV bên dưới.
+#Khi ta tạo một PVCs, ta sẽ chỉ định storageClassName là fast. Lúc này thì PVCs ta sẽ request tới StorageClass,
+#và StorageClass sẽ tự động tạo một thằng PV bên dưới cho PVCs xài.

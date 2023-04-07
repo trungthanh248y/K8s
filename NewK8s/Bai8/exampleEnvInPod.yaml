@@ -1,0 +1,22 @@
+# const http = require("http");
+
+# const server = http.createServer((req, res) => {
+#   console.log("Hello env\n")
+# });
+
+# server.listen(process.env.PORT, () => {
+#   console.log("Server listen on port ", process.env.PORT)
+# })
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-env
+spec:
+  containers:
+    - image: 080196/hello-env
+      name: hello-env
+      ports:
+        - containerPort: 3000
+      env: # pass env to container
+        - name: PORT # env name
+          value: '3000' # env value

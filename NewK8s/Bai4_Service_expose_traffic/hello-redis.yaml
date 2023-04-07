@@ -1,0 +1,9 @@
+# Hoặc tạo bằng cli cho nhanh: kubectl run hello-redis --image=080196/hello-redis
+apiVersion: v1
+kind: Pod
+metadata:
+  name: application
+spec:
+  containers:
+    - image: 080196/hello-redis
+      name: application

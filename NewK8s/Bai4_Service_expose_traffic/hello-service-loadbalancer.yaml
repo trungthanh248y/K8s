@@ -1,0 +1,16 @@
+# Khi bạn chạy kubernetes trên cloud, nó sẽ hỗ trợ LoadBalancer Service,
+# nếu bạn chạy trên môi trường không có hỗ trợ LoadBalancer thì bạn không thể tạo được loại Service này.
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubia-loadbalancer
+spec:
+  selector:
+    app: kubia
+  type: LoadBalancer
+  externalIPs: #rường hợp tự dựng K8s cluster trên server không phải cloud, LB không lấy được EXTERNAL-IP thì thêm vào
+    - 192.168.1.126
+  ports:
+    - port: 80
+      targetPort: 8080
+# kubectl get svc kubia-loadbalancer, hoặc kubectl get svc check ip publish ở đoạn EXTERNAL-IP

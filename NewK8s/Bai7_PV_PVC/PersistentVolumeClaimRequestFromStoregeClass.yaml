@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pvc
+spec:
+  storageClassName: fast # This PVC use fast StorageClass
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+# Ta sẽ thấy có một thằng pvc-1e6bc048 tự động được StorageClass tạo ra. Với STORAGECLASS là fast

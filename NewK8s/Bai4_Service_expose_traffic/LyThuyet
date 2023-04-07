@@ -1,0 +1,16 @@
+-, Services: expose traffic cho pod
+Vậy service giúp ta những vấn đề gì? Mỗi thằng Pod nó cũng có địa chỉ IP riêng của nó, sao ta không gọi thẳng nó luôn mà thông qua service chi cho mất công? Để trả lời những câu hỏi này thì ta sẽ nói qua một vài vấn đề.
+
++, Pods are ephemeral
+Khi tạo thằng pod mới tạo ra, nó sẽ có một IP khác với thằng cũ. Nếu ta dùng IP của Pod để tạo connection tới client thì lúc Pod được thay thế với IP khác thì ta phải update lại code.
++, Multiple Pod run same application
+Có nghĩa là ta sẽ có nhiều pod đang chạy một ứng dụng của chúng ta để tăng performance. Ví dụ khi ta dùng ReplicaSet với replicas = 3, nó sẽ tạo ra 3 Pod. Vậy làm sao ta biết được nên gửi request tới Pod nào?
+Thì để giải quyết những vấn để trên thì Kubernetes cung cấp cho chúng ta Services resource, Service sẽ tạo ra một endpoint không đổi cho các Pod phía sau, client chỉ cần tương tác với endpoint này.
++, Service quản lý connection
+Services cũng sẽ sử dụng label selectors để chọn Pod mà nó quản lý connection
+
++, Service sẽ có 4 loại cơ bản là:
+., ClusterIP
+., NodePort
+., ExternalName
+., LoadBalancer

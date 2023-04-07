@@ -1,0 +1,35 @@
+-, Trong kubernetes thì sẽ có những loại volume như sau:
+
+., emptyDir
+., hostPath
+., gitRepo
+., nfs
+., gcePersistentDisk, awsElasticBlockStore, azureDisk (cloud storage)
+., cinder, cephfs, iscsi, flocker, glusterfs, quobyte, rbd, flexVolume, vsphereVolume, photonPersistentDisk, scaleIO
+., configMap, secret, downwardAPI
+., PersistentVolumeClaim
+
+-, Những loại volume trên được phân chia thành 3 dạng chính:
+
+., Volume dùng để chia sẻ dữ liệu giữa các container trong Pod
+., Volume đính kèm vào trong filesystem một node
+., Volume đính kèm vào cluster và các node khác nhau có thể truy cập
+
+-, không cần phải nhớ hết các loại volume, xài tới đâu thì ta google tìm kiếm tới đó. 
+Ta chỉ cần nhớ một vài loại hay sử dụng nhất là emptyDir, hostPath, cloud storage, PersistentVolumeClaim. 
+Các loại secret, downwardAPI, configMap
+
+., emptyDir: loại volume này khi ta chỉ muốn các container có thể chia sẻ dữ liệu lẫn nhau và không cần lưu trữ 
+dữ liệu lại. Ví dụ là dữ liệu log từ một thằng container chạy web API, và ta có một thằng container khác sẽ truy cập
+vào log đó để xử lý log.
+
+., gitRepo: gitRepo là loại volume cũng giống emptyDir là sẽ tạo một empty folder, và sau đó nó sẽ clone code của git repository vào folder này.
+
+.,hostPath: hostPath là loại volume sẽ tạo một mount point từ Pod ra ngoài filesystem của node. Đây là loại volume 
+đầu tiên ta nói mà có thể dùng để lưu trữ persistent data. Dữ liệu lưu trong volume này chỉ tồn tại trên một worker
+node và sẽ không bị xóa đi khi Pod bị xóa.
+
+.,cloud storage: Loại volume này chỉ được hỗ trợ trên các nền tảng cloud, giúp ta lưu trữ persistent data, 
+kể cả khi Pod được tạo ở các worker node khác nhau, dữ liệu của ta vẫn tồn tại cho container. 3 nền tảng cloud 
+mà phổ biến nhất là AWS, Goolge Cloud, Azure tương ứng với 3 loại volume là gcePersistentDisk, awsElasticBlockStore, azureDisk.
+

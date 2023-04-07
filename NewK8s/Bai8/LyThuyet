@@ -1,0 +1,40 @@
+ta sẽ nói về cách để truyền cấu hình (configuration) của ứng dụng vào bên trong container, bằng cách sử dụng ConfigMap. 
+Và truyền sensitive data bằng Secret.
+
+-, Trong Pod ta có "chỉ định một thuộc tính tên là env", đây là thuộc tính của Pod giúp ta "truyền env vào bên trong container", 
+với tên của env là PORT, lưu ý là giá trị "env luôn là chuỗi", nếu bạn để số nó sẽ báo lỗi.
+
+-, Kiểm tra kĩ hơn bằng cách truy cập vào container và in ra env của nó như sau: "kubectl exec -it hello-env -- sh"
+Chú ý là list env này sẽ không thể update bên trong container khi container đó đã chạy, muốn update thì ta phải xóa Pod đó để nó chạy lại.
+
+-, Nếu truyền vào qua biến env thông thường sẽ dất dài nếu pod lớn và bị lặp lại vì thế sẽ có 2 các giải quyết vấn đề này
+., ConfigMap
+., Secret 
+
+-, ConfigMap: là một resource giúp chúng ta tách configuration ra riêng. Với giá trị sẽ được định nghĩa theo kiểu key/value pairs ở thuộc tính data
+VD: 
+data:
+    <key-1>: <value-1>
+    <key-2>: <value-2>
+Và giá trị này sẽ được truyền vào bên trong container như một env. Và vì ConfigMap nó là một resource riêng lẻ, ta có thể 
+sử dụng nó lại cho nhiều container khác nhau. Sử dụng ConfigMap là cách ta tách khỏi việc phải viết cấu hình env bên trong 
+config container của Pod.
+
+-, "Truyền file Với ConfigMap" ta có thể sử dụng key với value là nội dung của toàn bộ một file. Ví dụ ở exampleFileConfigMap
+Tạo một ConfigMap với tên là nginx-config, với key my-nginx-config.conf sẽ là tên của file khi ta truyền vào trong container
+
+ConfigMap của ta sẽ được sử dụng như một volume, với content là content ở trong ConfigMap. Lúc này volume của ta sẽ chứa 
+1 file tên là my-nginx-config.conf, sau đó file này sẽ được mount tới container web-server ở folder /etc/nginx/conf.d, 
+ta sẽ có /etc/nginx/conf.d/my-nginx-config.conf
+
+-> sau khi mount xong ta có thể test bằng cách truy cập vào pod: "kubectl exec -it nginx -- sh"
+"cd /etc/nginx/conf.d/" và "cat my-nginx-config.conf"
+tới đây có thể thấy đã config từ ConfigMap vào trong pod nginx thành công
+
+-, Ta sử dụng ConfigMap khi muốn dùng config ở nhiều Pod khác nhau và dữ liệu không phải sensitive data. 
+Đối với sensitive data thì kubernetes cung cấp cho chúng ta một resource khác tên là Secret.
+
+-, Secret: thay vì viết configmap thì scret sẽ chạy lệnh sau
+"kubectl create secret generic postgres-config --from-literal=DB=postgres --from-literal=USER=postgres --from-literal=PASSWORD=postgres"
+coi thông tin secret ta sẽ thấy nó được lưu ở dạng base64 encode.
+"kubectl get secret postgres-config -o yaml"

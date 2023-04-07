@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: hello-rc
+spec:
+  replicas: 2 # number of the pod
+  selector: # The pod selector determining what pods the RC is operating on
+    app: hello-kube # label value
+  template: # pod template
+    metadata:
+      labels:
+        app: hello-kube # label value
+    spec:
+      containers:
+        - image: 080196/hello-kube # image used to run container
+          name: hello-kube # name of the container
+          ports:
+            - containerPort: 3000 # pod of the container
+
+# Cấu trúc của một file config RC sẽ gồm 3 phần chính như sau:
+
+# label selector: sẽ chỉ định pod nào sẽ được RC giám sát
+# replica count: số lượng pod sẽ được tạo
+# pod template: config của pod sẽ được tạo
