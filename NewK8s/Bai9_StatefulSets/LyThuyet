@@ -1,0 +1,28 @@
+-, Stateless application: là một ứng dụng không lưu chữ lại dữ liệu
+-, Stateful application thì yêu cầu có trạng thái (state) của chính nó, và cần lưu lại state đó, hoặc yêu cầu phải có lưu trữ dữ liệu mà cần persistent storage, dữ liệu này sẽ được sử dụng bởi client và các app khác. Ví dụ như là database, nó sẽ có dữ liệu riêng của nó.
+
+Tại sao lại sinh ra statefulset trong khi đã có ReplicaSet:
+- Khi ta có nhiều POD, làm thế nào khi ta muốn mỗi POD sẽ trỏ đến một PVC khác nhau. Đúng vậy chúng ta không có
+cách nào khác ngoài tạo nhiều ReplicaSet, mà các POD trong ReplicaSet sẽ random ip + name => như vậy ta sẽ phải
+tạo ra bằng đấy cái service để định danh có các ReplicaSet này. cách để tự động các việc đó là sử dụng StatefulSets
+
+-, StatefulSets:
++, Giống như ReplicaSet, StatefulSets là một resource giúp chúng ta chạy nhiều POD mà cùng một template bằng cách
+set thuộc tính relocaset, nhưng khác với ReplicaSet ở chỗ "Pod của StatefulSets sẽ dc định danh chính xác với mỗi
+thằng sẽ có một state stable network identity của riêng nó"
+Mỗi Pod được tạo ra bởi StatefulSet sẽ được gán với một index, index này sẽ được sử dụng để định danh cho mỗi Pod. 
+Và tên của Pod sẽ được đặt theo kiểu <statefulset name>-<index>, chứ không phải random như của ReplicaSet.
+., StatefulSet định danh cho mỗi thằng POD
+., Với mỗi POD của StatefulSet thì sẽ có storage của riêng nó. Khi ta scale down và scale up số lượng POD tạo ra có
+index giống thằng cũ thì vẫn giữ nguyên storage của nó chứ k tạo ra thằng storage khác
+., Cung cấp storage riêng biệt cho mỗi Pod: StatefulSets sẽ tạo ra PersistentVolumeClaims cho mỗi Pod và gắn nó vào cho từng Pod tương ứng.
+Khi ta scale up Pod trong StatefulSets, thì sẽ có một Pod và một PersistentVolumeClaims mới được tạo ra, 
+nhưng khi ta scale down, thì chỉ có thằng Pod bị xóa đi, thằng PersistentVolumeClaims vẫn giữ ở đó và không bị xóa. 
+Để khi ta scale up lại thì thằng Pod vẫn được gắn đúng với PersistentVolumeClaims trước đó để dữ liệu của nó vẫn được giữ nguyên.
+
+-, Headless Service: Trước ta sử dụng Service để gửi request tới các pod thì h Headless Service cũng làm việc tương tự
+., Điểm khác nhau giữa 2 cái này: là config Service thì sẽ gửi request random tới các pod ở trong mạng còn Headless Service 
+thì ta sẽ chỉ định đích danh từ pod. Như config vd là file config ở trên ta có tạo một service mà chỉ định thuộc tính 
+"clusterIP của nó là None(clusterIP: None)"
+
+-, dùng StatefulSet cho stateful application và database, nên dùng StatefulSet để chạy database thay vì dùng ReplicaSet hoặc Deployment

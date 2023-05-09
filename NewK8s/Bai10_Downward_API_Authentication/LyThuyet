@@ -1,0 +1,8 @@
+-, Downward API: cho phép ta truyền metadata của Pod và các thông tin môi trường của nó vào bên trong container. 
+Ta có thể sử dụng những thông tin này và truyền nó qua config env của Pod, hoặc config volume của Pod để truyền 
+vào container như một file. Và đừng để tên của Downward API làm bạn nhầm lẫn, nó không phải là một REST endpoint, 
+nó chỉ là cách để ta truyền thông tin meta của Pod vào trong container.
+-, Downward API: Nó cho phép ta truyền những thông tin cơ bản của môi trường và những thông tin cần thiết của Pod 
+vào container. Nhưng những dữ liệu nó hỗ trợ thì khá giới hạn, ta không thể truy cập thông tin về những Pod khác 
+bằng cách sử dụng Downward API được
+-, Kubernetes API server: cho phép gọi tới nó và lấy những thông tin cần thiết về cluster

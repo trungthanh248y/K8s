@@ -1,0 +1,25 @@
+Pod''s phase:
+Đây là thông tin ta cần quan tâm trong trường status của Pod, trường này sẽ thể hiện cho ta biết Pod đang ở 
+giai đoạn nào trong một lifecycle
+
+1, Pending phase: Pod sẽ ở trạng thái Pending cho tới khi nó được schedule tới một worker node và started.
+2, Running phase: Pod sẽ ở trạng thái này khi 1 container trong Pod running thành công.
+3, Succeeded phase: Pod sẽ ở trạng thái này khi tất cả các container của Pod running thành công.
+4, Failed phase: chỉ cần có một contaier không chạy thành công thì Pod sẽ ở trạng thái này.
+5, Unkown phase: đây là trạng thái khi mà kubelet ở một worker node không thể gửi report của Pod về cho kubernetes master.
+
+dùng lệnh sau để kiểm tra: 'kubectl get pod <pod-name> | grep phase'
+
+Pod''s conditions:
+Đây là thuộc tính của Pod mà báo cho ta biết Pod đã đạt đến trạng thái mong muốn hay chưa. Thuộc tính này là một 
+array chứa các conditions của Pod. Có 4 condition sau:
+-, PodScheduled: Pod đã được scheduled tới node hay chưa.
+-, Initialized: tất cả các init container đã chạy xong hết chưa.
+-, ContainersReady: Tất cả các container trong Pod đã chạy được hết chưa.
+-, Ready: Tất cả các container Pod đã chạy thành xong và đã có thể nhận request chưa.
+
+Init container là các container ta định nghĩa trong thuộc tính initContainers khi viết config Pod, những container 
+này sẽ chạy tuần tự từng thằng một trước khi main container của ta chạy. Dùng để làm một số việc như khởi tạo 
+resouce cho container chính.
+
+Vê sự khác nhau của một container đã chạy được và đã chạy được + có thể nhận request. Một container đã chạy được nghĩa là container đã running thành công, ví dụ ta chạy một ứng dụng nodejs, container running thành công khi ta chạy được câu lệnh node start index.js, mà không gặp bất kì lỗi gì. Và lưu ý khi container ta đã chạy được thì chưa chắc nó đã có thể nhận request được, ví dụ như trong ứng dụng của ta có kết nối tới DB và cache, ta cần đợi nó kết nối thành công được thì ta mới cho http.listen ở port 3000, lúc này thì ứng dụng của ta đã có thể nhận được request. Chứ trước khi http.listen được thì cho dù ứng dụng ta đã chạy, ta cũng không gửi request tới nó được.

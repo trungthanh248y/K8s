@@ -1,0 +1,186 @@
+Một kubernetes cluster sẽ gồm 2 phần chính là:
+
+-, Kubernetes master (control plane)
+-, Kubernetes worker node
+
+Kubernetes master sẽ bao gồm 4 component:
+
+-, etcd
+-, API server
+-, Controller Manager
+-, Scheduler
+
+Kubernetes worker node sẽ bao gồm 3 thành phần:
+
+-, kubelet
+-, kube-proxy
+-, container runtime
+
+Bên cạnh những component chính, thì còn có một số add-on component phụ để enhance chức năng của kubernetes cluster như:
+
+-, Kubernetes DNS server
+-, Dashboard
+-, Ingress controller
+-, Container Network Interface network plugin
+
+Tất cả những component đều độc lập và có chức năng riêng, một kubernetes cluster muốn chạy được thì cần tất cả component ở master và worker node đề phải hoạt động. Ta có thể kiểm tra trạng thái của các components ở Control Plane bằng cách dùng câu lệnh: "kubectl get componentstatuses"
+
+Tất cả những system component trên đều giao tiếp với nhau thông qua API server, chúng không giao tiếp trực tiếp với nhau. "API server là thành phần duy nhất tương tác với etcd", không có component nào ngoài API server tương tác trực tiếp với etcd.
+Ở worker node, container runtime sẽ được tạo và quản lý bởi kubelet. kubelet sẽ đóng vai trò giao tiếp giữa master và worker node thông qua API server.
+
+Tất cả những component trong một kubernetes cluster sẽ không phải chạy như một ứng dụng cài trực tiếp trên server. Mà tất cả những component sẽ được chạy như một Pod, chúng sẽ được deploy tới master hoặc worker node và chạy như một Pod bình thường và nằm trong namespace tên là kube-system. Ta có thể list và xem những component đó:
+"kubectl get po -n kube-system"
+ta có 4 component là kube-controller-manager-master, etcd-master, kube-apiserver-master, kube-scheduler-master component và 1 add-on kube-dns. Ở từng worker node, ta sẽ có kube-proxy component và 1 add-on kube-flannel-ds (Container Network Interface network plugin). Đây là những thành phần sẽ tạo nên một kubernetes cluster (tùy vào tool bạn sử dụng install kubernetes thì tên Pod được tạo ra cho các component này có thể khác nhau).
+Các bạn sẽ để ý là ta sẽ không thấy một component đó là kubelet, thì thằng component này là thằng duy nhất chạy như một ứng dụng cài trực tiếp trên server chứ không phải một Pod trong kubernetes.
+
+Etcd:
+Tất cả các resource ta đã tạo trong series này như Pod, ReplicaSet, Deployment, Service, ... Các bạn có tự hỏi là làm sao kubernetes biết là những resource nào đã được tạo ra, và khi ta list nó ra thì kubernetes lấy dữ liệu từ đâu để hiển thị nó ra không? Thì những thông tin đó được lấy ra từ etcd. Etcd là một database mà được dùng để lưu trữ những thông tin về các resource bên trong kubernetes. Etcd là database dạng key-value store và. Tất cả các component khác sẽ đọc và ghi dữ liệu vào etcd thông qua API server.
+
+Ngoài ra etcd còn là một distributed storage. Có nghĩa là ta có thể có nhiều hơn 1 etcd database trong một cluster và tất cả dữ liệu lưu trữ trong từng database đó điều giống nhau. Để khi một database die thì ta vẫn có 1 database khác chạy, giúp cho cluster ta vẫn chạy bình thường được.
+từng key trong etcd sẽ là một path, key đó có thể chứa key khác hoặc là chứa value. Kubernetes lưu tất cả các resource bên dưới đường dẫn là /registry. Ta có thể list dữ liệu bên dưới /registry
+"etcd /registry"
+nó có thể chạy ra ntn
+"/registry/pods
+..."
+nếu muốn xem chi tiết về pods trong registry thì ta có thể chạy tiếp:
+"etcd /registry/pods"
+chạy tới khi lấy đc kết quả ta muốn kiểm tra
+
+API server:
+Đây là component trung tâm mà được sử dụng bởi các component khác hoặc client. API server cung cấp cho ta một 
+REST API để ta thực hiện các hành động CRUD (Create, Read, Update, Delete) lên cluster state (thông tin về toàn 
+bộ resource trong cluster), đọc, ghi, thay đổi cluster state. Và lưu cluster state vào etcd.
+
+API server sẽ chịu trách nhiệm Authentication, Authorization client, validation config của resource, chuyển đổi 
+resource thành dạng có thể lưu vào trong etcd. Một API server client mà chúng ta hay xài nhất là kubectl.
+
+Khi ta dùng kubectl để tạo một resouce, thằng kubectl này sẽ tạo một POST request kèm theo body là config của 
+resource tới API server. Sau đó API server sẽ kiểm tra xem client này có được phép gọi tới nó hay không qua 
+Authentication plugin, sau đó API sẽ kiểm tra quyền của client này có được thực hiện hành động này hay không 
+qua Authorization plugin. Tiếp theo API server sẽ thực hiện chuyển đổi config resource ban đầu thành dạng format 
+nó có thể đọc thông quá các Admission control plugin. Bước tiếp theo API server sẽ validation config của resource 
+này có đúng hay không, nếu mọi thứ đều ok hết thì resource này sẽ được lưu vào ectd.
+
+Authentication plugins:
+Đây là công việc đầu tiên của API server, nó sẽ thực hiện authentication với client thông qua một hay nhiều 
+authentication plugins được config bên trong API server. API server sẽ thực hiện các plugin này theo từng cái, 
+cho tới khi nó xác định cái request này là của ai. Token được sử dụng để thực hiện bước authentication này nằm 
+ở trong header với key là Authorization, ta đã nói về nó ở bài Downward API. Các plugin này sẽ tách thông tin 
+về username, user ID, and groups bên trong token, nếu mọi thứ ok, request này sẽ được chuyển qua bước tiếp theo 
+là authorization, nếu không thì nó sẽ trả về lỗi 403.
+
+Authorization plugins:
+Đây là công việc thứ hai của API server, sau khi xác định được client là ai, thì nó sẽ kiểm tra quyền của client 
+này có được thực hiện một hành động lên trên một resouce hay không thông qua các authorization plugins, quyền này 
+ta sẽ thiết lập ở RBAC (Role-based access control ta sẽ nói ở các bài sau). Ví dụ, khi ta đọc một Secret resource, 
+các plugin này sẽ kiểm tra là ta có được quyền đọc Secret resource hay không, nếu không có quyền thì nó sẽ trả về 
+lỗi 403. Nếu client có quyền thực hiện thì request này sẽ được chuyển qua bước chuyển đổi format.
+
+Admission control plugin:
+Nếu một request mà thực hiện việc create, update hoặc delete resouce, thì nó sẽ được chuyển qua bước này 
+(nếu request mà chỉ list thì source thì không). Ở bước này thì config resouce ban đầu, bất kể viết theo dạng 
+YAML hay JSON, thì đều được chuyển sang dạng mà API server có thể validation và lưu vào etcd được, thông qua 
+các admission control plugin. Ngoài ra các plugin này còn modify một số thông tin của resouce trước khi lưu vào 
+etcd nếu ta có cài đặt trong API server.
+Ví dụ, có một resouce mà sẽ config limit cpu và memory của toàn bộ Pod khi Pod được tạo ra, bất kể trong Pod của
+bạn có config limit này hay không. Đó là LimitRange resouce.
+
+VD:
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+spec:
+  limits:
+  - default:
+      memory: 512Mi
+    type: Container
+
+LimitRange resouce trên sẽ giới hạn limit memory của toàn bộ Pod trong default namespace là 512Mi. Khi ta tạo resouce 
+này thì trong API server sẽ enable plugin là Admission Control LimitRange plugins. Tất cả config của pod sẽ được 
+modify để thêm vào thuộc tính limit trước khi nó được tạo. Sau khi sau bước này thì request sẽ được chuyển qua bước cuối.
+
+Validation resouce và lưu vào ectd:
+Đây là bước mà sẽ kiểm tra config resouce có đúng hay không, nếu có thì API server lưu reousce này vào etcd, 
+tương đương với việc resouce đã được tạo ra.
+
+API server sẽ chỉ làm những việc mà ta đã nói ở trên, lưu ý là nó sẽ không thực hiện công việc tạo ra Pod, 
+hoặc tạo ra ReplicaSet, tất cả những gì nó làm là lưu resouce vào etcd, sau đó nó sẽ gửi thông báo tới component 
+phụ trách việc tạo ra resouce đó.
+
+Component đó là Controller Manager.
+
+Controller Manager:
+Đây là component phụ trách việc tạo, deploy các resouce thông qua API server. Component này sẽ chứa nhiều 
+controller khác nhau, mỗi controller sẽ thực hiện công việc riêng của nó. Một số controller như:
+
+-, Replication controllers
+-, Deployment controller
+-, StatefulSet controller
+
+Từ tên của các controller thì ta cũng có thể đoán được là controller đó làm gì. Các controller này sẽ lắng nghe thông 
+báo từ API server về các sự kiện mà thay đổi một resouce như là create, update hoặc delete và thực hiện hành động 
+tương ứng với thay đổi đó. Là sẽ một ra một resouce object mới, hoặc update một cái có sẵn, hoặc xóa đi một thằng.
+
+Replication controllers:
+Đây là controller làm những công việc liên quan tới ReplicationControllers resouce mà ta đã nói ở bài thứ 3. Nó 
+sẽ lắng nghe thông báo từ API server về những thứ thay đổi liên quan tới ReplicationControllers resouce, và thực 
+hiện việc theo dõi số lượng Pod hiện tại có bằng với thuộc tính replicas của nó hay không. Khi phát hiện số lượng 
+Pod ít hơn so với thuộc tính replicas của nó, nó sẽ tạo một post request tới API server, để một Pod mới được tạo ra.
+
+Deployment controller:
+Đây là controller sẽ lắng nghe những thay đổi liên quan tới Deployment resouce, bên cạnh đó, nó sẽ cũng sẽ thực 
+hiện các công việc như rollout update, và quản lý các ReplicaSet bên dưới nó.
+
+StatefulSet controller:
+Controller này cũng tương tự như replication controllers, nó sẽ quản lý Pod, nhưng bên cạnh đó, nó sẽ quản lý thêm
+PersistentVolumeClaims template cho mỗi Pod.
+Từng thằng controller sẽ quản lý và lắng nghe thay đổi về resouce liên quan tới nó. Lưu ý là ta sẽ không có Pod 
+controller, thay vào đó, sẽ có một component khác để thực hiện việc worker nào sẽ được chọn để deploy Pod tới đó.
+
+Scheduler:
+Đây là component phụ trách việc sẽ chọn worker nào mà Pod sẽ được deploy tới. Công việc nó làm sẽ là lắng nghe 
+thông báo từ API server về việc Pod nào đã được lưu vào ectd xong, mà chưa có thuộc tính node. Nó sẽ lựa chọn 
+worker node phù hợp, sau đó đó update thuộc tính node của Pod resouce thông qua API server. Sau đó, API server 
+sẽ thông báo tới kubelet ở worker node đó để tạo ra container runtime tương ứng với Pod đó.
+
+Mặc dù công việc của Scheduler nghe có vẻ đơn giản, chọn worker node thích hợp cho Pod. Nhưng công việc thực sự 
+cần làm để chọn worker node thích hợp nhất thì không đơn giản tí nào, ở bên dưới nó sẽ chạy các thuật toán hoặc 
+dữ hơn nữa là một machine learning model để chọn được đúng worker node.
+
+Scheduling algorithm đơn giản:
+Thuật toán mặt định để chọn worker node đơn giản sẽ như sau:
+-, Chọn ra node có thể chấp nhận Pod từ những node có sẵn
+-, Sắp sếp các node đó theo thứ tự ưu tiên, và chọn node có thứ tự ưu tiên lớn nhất
+
+Kubectl:
+Đây là component sẽ chịu trách nhiệm tương tác với master node và quản lý container runtime. Khi ta join một worker 
+node vào master, thì công việc đầu tiên của thằng kubelet này sẽ là tạo một post request với body là node config tới 
+API server để tạo một node resouce.
+Sau đó nó sẽ lắng nghe thông báo từ API server về Pod mà được scheduled tới nó để tạo container runtime tương ứng. 
+Ngoài ra kubelet còn giám sát container và gửi thông tin đó lên API server. Khi Pod bị xóa khỏi API server, API 
+server sẽ thông báo tới kubelet và nó sẽ thực hiện việc xóa container đó ra khỏi node, sau khi xong thì nó sẽ gửi 
+thông báo lại cho API server là container tương ứng với Pod đó đã được xóa xong.
+
+Kube proxy:
+Đây là component quản lý traffic và network của worker node mà liên quan tới Pod. Ở các bài trước ta tạo Service 
+để client có thể tương tác được với Pod của chúng ta, thì ở bên dưới thằng kub-proxy này sẽ dựa vào config của 
+service để cấu hình network tương ứng ở worker node để một request có thể gửi được tới Pod mà nằm phiá sau Service. 
+Thằng kube-proxy này sẽ có 3 mode:
+-, userspace
+-, iptable: có thể hiểu đơn giản là một service của linux dùng để cấu hình firewall và cấu hình route đường đi của một request
+-, ipvs(IP vitrual service): có preformance tốt hơn so với iptable.
+
+Tổng quan:
+API service: đóng vai trò (như thể repository tương tự như MVC) nó chỉ tương tác với etcd(tương tự db)
+Controller: (tương tự như controller trong MVC) với các: Devloyment controller, ReplicaSet controller, như thể là
+các api làm các nghiệp vụ riêng biệt
+Scheduler: lắng nghe API service để lựa chon worker node phù hợp để đẩy pod mới này vào các node sao cho hiệu quả nhất
+Kubelet: Tương tác vs master note và quản lý container runtime, tức là nhận thông báo từ API service về Pod dc 
+scheduler tới nó để tạo container runtime, và nó thông báo trạng thái container runtime tới API service
+Kube proxy: Quản lý traffic và network của worker node mà liên quan đến pod
+
+Chi tiết về luông xem ảnh trong phần: Các component làm việc với nhau như thế nào?
+bài: https://viblo.asia/p/kubernetes-series-bai-11-kubernetes-internals-architecture-L4x5xPjb5BM#_ket-luan-22
+
+hoặc có thể dùng lệnh sau để xem luồng của một component: kubectl get events --watch
